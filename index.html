@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Form Send Data</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+}
+
+div {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #333;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input,select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #276508;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover {
+background-color: #1E4A07;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #276508;
+    color: #fff;
+}
+
+a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    text-decoration: none;
+    background-color: #0E3AA5;
+    color: #fff;
+    border-radius: 3px;
+}
+
+a:hover {
+    background-color: #08205B;
+}
+
+</style>
+</head>
+<body>
+<div>
+    <h2>Form Mahasiswa</h2>
+    <form id="mahasiswaForm">
+        <label for="nim">NIM:</label>
+        <input type="number" id="nim" name="nim" required /> <br />
+        <label for="nama">Nama Mahasiswa:</label>
+        <input type="text" id="nama" name="nama" required /> <br />
+        <label for="prodi">Program Studi:</label>
+        <select id="kdProdi" name="kdProdi" required>
+        <option value="SIF">Sistem Informasi</option>
+        <option value="INF">Teknik Informatika</option>
+        <option value="MNJ">Manajemen</option>
+        </select>
+        <br />
+        <button type="button" onclick="addData()">Simpan</button>
+    </form>
+    <hr />
+    <h2>Data Mahasiswa</h2>
+    <table border="1">
+        <thead>
+        <tr>
+        <th>NIM</th>
+        <th>Nama Mahasiswa</th>
+        <th>Program Studi</th>
+        </tr>
+        </thead>
+        <tbody id="dataContainer">
+        <!-- Data akan ditampilkan di sini -->
+        </tbody>
+    </table>
+    <div>
+        <button type="button" onclick="sendData()">Kirim Ke Server</button>
+        <a href="index.php">Kembali</a>
+    </div>
+</div>
+<script>
+let dataJson = [
+    { nim: "2020087013", nama: "RIVALSYACH ADINANTO", KdProdi: "SIF" },
+    { nim: "2021081001", nama: "RAJASA RUSMANA ", KdProdi: "SIF" },
+    { nim: "2021081002", nama: "YESSY", KdProdi: "SIF" },
+    { nim: "2021081005", nama: "HAFID ROIHAN", KdProdi: "SIF" },
+    { nim: "2021081024", nama: "LOLA ADRIANI PUTRI", KdProdi: "SIF" },
+    { nim: "2021081025", nama: "GLORYS", KdProdi: "SIF" },
+];
+// Array untuk menyimpan data mahasiswa
+let mahasiswaData = [];
+function addData() {
+// Mendapatkan nilai dari form
+const nim = document.getElementById("nim").value;
+const nama = document.getElementById("nama").value;
+const kdProdi = document.getElementById("kdProdi").value;
+// Membuat objek mahasiswa
+const mahasiswa = { nim, nama, kdProdi };
+// Menambahkan objek mahasiswa ke dalam array
+mahasiswaData.push(mahasiswa);
+// Memperbarui tampilan tabel
+updateTable();
+const form = document.getElementById("mahasiswaForm");
+nim = form.reset();
+nama = form.reset();
+kdProdi = form.reset();
+}
+function updateTable() {
+// Mendapatkan elemen tbody
+const tbody = document.getElementById("dataContainer");
+// Menghapus semua baris dalam tbody
+tbody.innerHTML = "";
+// Menambahkan baris baru untuk setiap data mahasiswa
+mahasiswaData.forEach((mahasiswa) => {
+const row = `<tr>
+<td>${mahasiswa.nim}</td>
+<td>${mahasiswa.nama}</td>
+<td>${mahasiswa.kdProdi}</td>
+</tr>`;
+tbody.innerHTML += row;
+});
+}
+function sendData() {
+// Mengirim data JSON ke receiveDataJSON.php menggunakan AJAX atau fetch API
+const jsonData = JSON.stringify(mahasiswaData);
+// Contoh menggunakan fetch API
+fetch("receiveDataJSON.php", {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+},
+body: jsonData,
+})
+.then((response) => response.json())
+.then((data) => {
+// Proses respons dari server jika diperlukan
+console.log(data);
+})
+.catch((error) => {
+console.error("Error:", error);
+});
+alert("Data berhasil ditambahkan");
+//refresh halaman ini
+location.reload();
+}
+</script>
+</body>
+</html>
